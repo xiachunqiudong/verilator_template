@@ -1,19 +1,26 @@
 BUILD_DIR = ./build
-
 VFLAGS = -cc -trace --exe --build -j 8
 
-VSRC=./top.v
-CSRC=./main.cpp
+TOP ?= top
+VTOP =  V$(TOP)
 
-build:
+CSRC = $(shell find ./csrc -name '*.cpp' -or -name '*.c')
+VSRC = $(shell find ./vsrc -name '*.v' -or -name '*.sv')
+
+$(VTOP):
+	@echo "====================== CSRC ======================"
+	@echo $(CSRC)
+	@echo "====================== VSRC ======================"
+	@echo $(VSRC)
+	@echo "====================== END  ======================"
 	@verilator $(VFLAGS) \
-	--top-module top \
+	--top-module $(TOP) \
 	--Mdir $(BUILD_DIR) \
 	-sv \
 	$(VSRC) $(CSRC) \
 
-sim:
-	$(BUILD_DIR)/Vtop
+sim: $(VTOP)
+	$(BUILD_DIR)/$(VTOP)
 
 clean:
 	rm -rf ./build
